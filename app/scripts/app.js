@@ -26,8 +26,6 @@ form.addEventListener('submit', (event) => {
                 </li>
             `);
 
-            tasks.adjust
-
         } else {
             alert(data.error.message);
         }
