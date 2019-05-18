@@ -237,6 +237,23 @@ class Request
     }
 
     /**
+     * @param int $code
+     * @param string $mime
+     * @param string $charset
+     */
+    public function setStatus(int $code, string $mime = "text/html", string $charset = "utf-8") {
+        header("Content-Type: $mime; charset=$charset", true, $code);
+    }
+
+    /**
+     * @param string $url
+     * @param int $code
+     */
+    public function redirect(string $url, int $code = 301) {
+        header("Location: $url", true, $code);
+    }
+
+    /**
      * @param string $path
      * @return bool
      */

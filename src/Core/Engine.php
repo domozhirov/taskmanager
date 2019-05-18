@@ -30,6 +30,11 @@ class Engine
     protected $config;
 
     /**
+     * @var Db
+     */
+    protected $db;
+
+    /**
      * Engine constructor.
      * @param Config $config
      */
@@ -42,6 +47,24 @@ class Engine
         }
 
         $this->setHome($config->app->home);
+
+        $this->db = new Db(
+            $config->db->user,
+            $config->db->password,
+            $config->db->database,
+            $config->db->host,
+            $config->db->port
+        );
+
+        $this->db->connect();
+    }
+
+    /**
+     * @return Db
+     */
+    public function db()
+    {
+        return $this->db;
     }
 
     /**

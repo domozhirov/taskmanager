@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\AbstractController;
+use App\Models\Task;
 
 class TasksController extends AbstractController
 {
@@ -12,8 +13,11 @@ class TasksController extends AbstractController
      */
     public function listAction(int $p = 0): array
     {
+        $total = Task::getTotal();
+
         return [
-            'bla' => 123,
+            'total' => $total,
+            'tasks' => $total ? Task::getAll($p * 3) : [],
         ];
     }
 }

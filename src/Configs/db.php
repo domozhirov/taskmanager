@@ -6,5 +6,4 @@ return [
     'user'     => 'user',
     'password' => 'password',
     'database' => 'database',
-    'sql_mode' => '',
 ];
