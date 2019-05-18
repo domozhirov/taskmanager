@@ -1,0 +1,28 @@
+{
+    "name": "mihail.domozhirov/task-manager",
+    "authors": [
+        {
+            "name": "Domozhirov Mikhail",
+            "email": "michael@domozhirov.ru"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.26",
+        "ext-json": "*",
+        "ext-mysqlnd": "*",
+        "ext-mysqli": "*",
+        "ext-mbstring": "*",
+        "ext-intl": "*",
+        "ext-redis": "*",
+        "ext-pcntl": "*",
+        "ext-posix": "*",
+        "ext-curl": "*",
+        "ext-openssl": "*",
+        "smarty/smarty": "~3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src"
+        }
+    }
+}
