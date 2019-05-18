@@ -8,6 +8,8 @@ class Task
 {
     const TABLE = 'task';
 
+    const LIMIT = 3;
+
     /**
      * @var int
      */
@@ -22,6 +24,11 @@ class Task
      * @var string
      */
     protected $email;
+
+    /**
+     * @var int
+     */
+    protected $completed = 0;
 
     /**
      * @var string
@@ -80,9 +87,29 @@ class Task
      */
     public function setEmail(string $email): Task
     {
-        $this->email = $email;
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->email = $email;
+        } else {
+            throw new \InvalidArgumentException("Email ($email) is invalid", 400);
+        }
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCompleted(): int
+    {
+        return $this->completed;
+    }
+
+    /**
+     * @param int $completed
+     */
+    public function setCompleted(int $completed): void
+    {
+        $this->completed = $completed;
     }
 
     /**
@@ -118,19 +145,35 @@ class Task
     /**
      * @param int $start
      * @param int $limit
+     * @param string $order_by
      * @return array
      */
-    public static function getAll(int $start = 0, int $limit = 3): array
+    public static function getAll(int $start = 0, int $limit = Task::LIMIT, string $order_by = ''): array
     {
+        $db    = Db::getInstance();
         $table = static::TABLE;
-        $query = "SELECT * FROM $table LIMIT $start, $limit";
+        $query = "SELECT * FROM $table";
 
-        return Db::getInstance()->fetchAll($query);
+        if ($order_by) {
+            $order_by = $db->escape($order_by);
+
+            $query .= " ORDER BY $order_by";
+        }
+
+        return Db::getInstance()->fetchAll("$query LIMIT $start, $limit");
     }
 
     public function add()
     {
+        $data = [
+            'name'  => $this->getName(),
+            'email' => $this->getEmail(),
+            'text'  => $this->getText(),
+        ];
 
+        $this->id = Db::getInstance()->insert(static::TABLE, $data);
+
+        return $this->id;
     }
 
     public function update()
@@ -141,5 +184,19 @@ class Task
     public function delete()
     {
 
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return [
+            'id'        => $this->getId(),
+            'name'      => $this->getName(),
+            'email'     => $this->getEmail(),
+            'completed' => $this->getCompleted(),
+            'text'      => $this->getText(),
+        ];
     }
 }

@@ -89,6 +89,19 @@ class Request
     protected $params = [];
 
     /**
+     * @var string
+     */
+    protected $method = 'GET';
+
+    /**
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    /**
      * @param string $out
      * @return Request
      */
@@ -100,9 +113,17 @@ class Request
     }
 
     /**
+     * @return string
+     */
+    public function getOut(): string
+    {
+        return $this->out;
+    }
+
+    /**
      * @return \Exception
      */
-    public function getError(): \Exception
+    public function getError(): ?\Exception
     {
         return $this->error;
     }
@@ -237,6 +258,14 @@ class Request
     }
 
     /**
+     * @return string
+     */
+    public function getMethod(): string
+    {
+        return $this->method;
+    }
+
+    /**
      * @param int $code
      * @param string $mime
      * @param string $charset
@@ -300,13 +329,13 @@ class Request
 
         $this->_parseURI($path);
 
-        $request_method = $_SERVER["REQUEST_METHOD"];
+        $this->method = $_SERVER["REQUEST_METHOD"];
 
-        if ($request_method === "GET") {
+        if ($this->method === "GET") {
             if (isset($this->options['param']) && is_array($this->options['param'])) {
                 $this->params += $this->options['param'];
             }
-        } elseif ($request_method === "POST") {
+        } elseif ($this->method === "POST") {
             if (!empty($_SERVER["CONTENT_TYPE"])) {
                 $type = $_SERVER["CONTENT_TYPE"];
 
@@ -318,6 +347,7 @@ class Request
                         });
                         break;
                     case "application/json":
+                    case "application/json;charset=UTF-8":
                         $this->params = json_decode(file_get_contents("php://input"), true);
                         break;
                     case "application/phpser":
@@ -327,7 +357,7 @@ class Request
                 }
             }
         } else {
-            throw State::badRequest("Unsupported request method $request_method");
+            throw State::badRequest("Unsupported request method $this->method");
         }
     }
 }

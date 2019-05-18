@@ -8,14 +8,16 @@ class Render
      * @param Request $request
      * @throws \SmartyException
      */
-    public function htmlFormat(Request $request) {
+    public function htmlFormat(Request $request)
+    {
         $render = new \Smarty();
 
         $render->setTemplateDir(APP_DIR . "/src/Views");
-        $render->setCacheDir(APP_DIR. '/var/smarty');
+        $render->setCacheDir(APP_DIR . '/var/smarty/cache');
+        $render->setCompileDir(APP_DIR . '/var/smarty/template_c');
 
         $controller = $request->getController();
-        $action = $request->getAction();
+        $action     = $request->getAction();
 
         $request->setStatus(200);
 
@@ -47,5 +49,45 @@ class Render
         $data['now']     = time();
 
         return $data;
+    }
+
+    public function jsonFormat(Request $request)
+    {
+        $request->setStatus(200, 'text/json');
+
+        $response = [];
+
+        if ($error = $request->getError()) {
+            while ($error->getPrevious()) {
+                $error = $error->getPrevious();
+            }
+            $response["error"] = [
+                "code"      => $error->getCode(),
+                "message"   => $message = $error->getMessage(),
+                "exception" => get_class($error),
+            ];
+
+            if ($out = $request->getOut()) {
+                $response["error"]["stdout"] = $out;
+            }
+        } else {
+            $response["result"] = $request->getData();
+        }
+
+        echo json_encode($response,
+            JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_BIGINT_AS_STRING);
+
+        if (json_last_error()) {
+            $response["error"] = [
+                "error" => [
+                    "message"   => json_last_error_msg(),
+                    "code"      => 500,
+                    "exception" => "ErrorException",
+                ],
+            ];
+            unset($response["result"]);
+            echo json_encode($response,
+                JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_BIGINT_AS_STRING);
+        }
     }
 }

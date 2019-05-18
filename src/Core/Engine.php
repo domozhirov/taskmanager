@@ -43,7 +43,7 @@ class Engine
         $this->config = $config;
 
         foreach ($config->actions as $name => $action) {
-            $this->_addController($name, $action[0], $action[1] ?? 'index');
+            $this->addController($name, $action[0], $action[1] ?? 'index');
         }
 
         $this->setHome($config->app->home);
@@ -81,6 +81,14 @@ class Engine
     public function getRender()
     {
         return $this->render;
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest(): Request
+    {
+        return $this->request;
     }
 
     /**
@@ -196,7 +204,7 @@ class Engine
      * @param string $action
      * @param int $access
      */
-    protected function _addController(
+    protected function addController(
         string $controller,
         string $class,
         string $action = 'none',
@@ -210,19 +218,40 @@ class Engine
         ];
     }
 
+    /**
+     * @param AbstractController $controller
+     * @param string $method
+     * @param array $params
+     * @return mixed
+     * @throws State
+     */
     protected function invoke(AbstractController $controller, string $method, array &$params)
     {
+        $info = $this->request->getInfo();
         $args = [];
+        $name = '';
 
-        /**
-         * @var $info \ReflectionParameter
-         */
-        foreach ($info = $this->request->getInfo() as $info) {
-            $name = $info->getName();
+        try {
+            /**
+             * @var $param \ReflectionParameter
+             */
+            foreach ($info as $param) {
+                $name = $param->getName();
 
-            if (isset($params[$name])) {
-                $args[] = $params[$name];
+                if (isset($params[$name])) {
+                    $args[] = $params[$name];
+                } else {
+                    $value = $param->getDefaultValue();
+
+                    if (isset($value)) {
+                        $args[] = $value;
+                    } else {
+                        throw new State("Some arguments mismatch required parameter '$name'", 404);
+                    }
+                }
             }
+        } catch (\ReflectionException $e) {
+            throw new State("Some arguments mismatch required parameter '$name'", 404);
         }
 
         return call_user_func_array([$controller, $method .'Action'], $args);
