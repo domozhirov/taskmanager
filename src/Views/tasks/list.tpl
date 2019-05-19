@@ -24,7 +24,10 @@
                     </div>
                     {if $content.total > 1}
                         <div class="col flex-fill"></div>
-                        <div class="col">
+                        <div class="col d-flex align-items-center">
+                            {if $smarty.get.param.sort_by}
+                                <a href="/" class="mr-2">Reset</a>
+                            {/if}
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Sort By
@@ -53,7 +56,7 @@
                     <li class="list-group-item" data-toggle="modal" data-target="#editModal" data-task-id="{$e.id}">
                         <strong>{$e.name}</strong>  - <small>{$e.email}</small>
                         <hr class="mt-1 mb-1">
-                        {$e.text}
+                        <div class="text-ellipsis">{$e.text}</div>
                         <i class="fa fa-window-close" aria-hidden="true"></i>
                     </li>
                 {/foreach}
