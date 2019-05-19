@@ -69,4 +69,56 @@ class TasksController extends AbstractController
 
         return $task->toArray();
     }
+
+    /**
+     * @param int $id
+     * @param int $status
+     * @return array
+     * @throws State
+     */
+    public function changeStatusAction(int $id, int $status): array
+    {
+        if ($task = Task::getById($id)) {
+            $task->setStatus($status)->update();
+        } else {
+            throw State::notFound("Task not found by id '$id'");
+        }
+
+        return $task->toArray();
+    }
+
+    /**
+     * @param int $id
+     * @param string $text
+     * @return array
+     * @throws State
+     */
+    public function changeTextAction(int $id, string $text): array
+    {
+        if (!$text) {
+            throw State::badRequest('Param text is empty');
+        }
+
+        if ($task = Task::getById($id)) {
+            $task->setText($text)->update();
+        } else {
+            throw State::notFound("Task not found by id '$id'");
+        }
+
+        return $task->toArray();
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     * @throws State
+     */
+    public function getAction(int $id): ?array
+    {
+        if (!$task = Task::getById($id)) {
+            throw State::notFound("Task not found by id '$id'");
+        }
+
+        return $task->toArray();
+    }
 }

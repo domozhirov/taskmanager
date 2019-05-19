@@ -100,19 +100,22 @@ class Task
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    public function getStatus(): bool
+    public function getStatus(): int
     {
-        return (bool)$this->status;
+        return $this->status;
     }
 
     /**
-     * @param bool $status
+     * @param int $status
+     * @return Task
      */
-    public function setStatus(bool $status): void
+    public function setStatus(int $status): Task
     {
         $this->status = (int)$status;
+
+        return $this;
     }
 
     /**
@@ -165,6 +168,27 @@ class Task
         return Db::getInstance()->fetchAll("$query LIMIT $start, $limit");
     }
 
+    /**
+     * @param int $id
+     * @return Task|null
+     */
+    public static function getById(int $id): ?Task
+    {
+        $table = static::TABLE;
+        $query = "SELECT * FROM $table WHERE id = $id";
+
+        if ($row = Db::getInstance()->fetchRow($query)) {
+            return (new static)
+                ->setId($row['id'])
+                ->setName($row['name'])
+                ->setEmail($row['email'])
+                ->setStatus($row['status'])
+                ->setText($row['text']);
+        }
+
+        return null;
+    }
+
     public function add()
     {
         $data = [
@@ -181,7 +205,14 @@ class Task
 
     public function update()
     {
+        $db = Db::getInstance();
+        $data = $this->toArray();
 
+        if ($id = $data['id']) {
+            unset($data['id']);
+        }
+
+        $db->update(static::TABLE, $data, "id = $id");
     }
 
     public function delete()

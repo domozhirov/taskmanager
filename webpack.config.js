@@ -92,7 +92,7 @@ module.exports = (env = {}, argv) => {
         },
         {
           test: /\.(gif|png|jpe?g|svg)$/i,
-          exclude: /fonts/,
+          exclude: /images/,
           use: [
             {
               loader: 'file-loader',
@@ -125,7 +125,7 @@ module.exports = (env = {}, argv) => {
         },
         {
           test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-          exclude: /images/,
+          exclude: /fonts/,
           use: [{
             loader: 'file-loader',
             options: {
