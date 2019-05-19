@@ -2,6 +2,8 @@
 
 namespace App\Core;
 
+use App\Models\User;
+
 class Engine
 {
     /**
@@ -28,6 +30,11 @@ class Engine
      * @var Config
      */
     protected $config;
+
+    /**
+     * @var User
+     */
+    protected $user;
 
     /**
      * @var Db
@@ -89,6 +96,24 @@ class Engine
     public function getRequest(): Request
     {
         return $this->request;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     * @return Engine
+     */
+    public function setUser(User $user): Engine
+    {
+        $this->user = $user;
+        return $this;
     }
 
     /**
@@ -288,11 +313,11 @@ class Engine
 
             if ($info = $this->getActionInfo($controller, $action)) {
                 $request->setInfo($info);
-
-                $data = $this->invoke($request->getActor(), $request->getAction(), $request->getParams());
-
-                $request->setData($data);
             }
+
+            $data = $this->invoke($request->getActor(), $request->getAction(), $request->getParams());
+
+            $request->setData($data);
 
             $this->display($request, null);
 

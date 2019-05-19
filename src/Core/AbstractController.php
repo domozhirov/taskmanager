@@ -21,6 +21,10 @@ abstract class AbstractController
     public function __construct(Engine $engine) {
         $this->engine = $engine;
         $this->config = $engine->getConfig();
+
+        if ($user = User::getCurrent()) {
+            $engine->setUser($user);
+        }
     }
 
     /**

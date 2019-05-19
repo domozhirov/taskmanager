@@ -15,6 +15,7 @@ class Render
         $render->setTemplateDir(APP_DIR . "/src/Views");
         $render->setCacheDir(APP_DIR . '/var/smarty/cache');
         $render->setCompileDir(APP_DIR . '/var/smarty/template_c');
+        $render->setErrorReporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_USER_WARNING & ~E_USER_NOTICE & ~E_WARNING & ~E_USER_WARNING);
 
         $controller = strtolower($request->getController());
         $action     = strtolower($request->getAction());
@@ -60,6 +61,7 @@ class Render
         $data['request'] = $request;
         $data['action']  = $action;
         $data['content'] = $request->getData();
+        $data['user']    = $request->getEngine()->getUser();
         $data['now']     = time();
 
         return $data;

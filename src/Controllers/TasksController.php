@@ -55,6 +55,11 @@ class TasksController extends AbstractController
             throw State::badRequest('Post request required');
         }
 
+        if ($user = $this->engine->getUser()) {
+            $name = $user->getName();
+            $email = $user->getEmail();
+        }
+
         $task = (new Task)
             ->setName($name)
             ->setEmail($email)

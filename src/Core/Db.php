@@ -89,7 +89,7 @@ class Db
     public static function getInstance(): Db
     {
         if (!static::$instance) {
-            throw new \LogicException('Class Db not initialized');
+            throw new \LogicException('Class Db is not initialized');
         }
 
         return static::$instance;
@@ -213,6 +213,20 @@ class Db
             $row = $res->fetch_array(\MYSQLI_NUM);
 
             return $row[0];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param $query
+     * @return mixed|null
+     */
+    public function fetchRow($query) {
+        $res = $this->query($query);
+
+        if($res->num_rows) {
+            return $res->fetch_array(\MYSQLI_ASSOC);
         } else {
             return null;
         }

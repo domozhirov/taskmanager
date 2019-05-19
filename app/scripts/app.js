@@ -21,15 +21,6 @@ form && form.addEventListener('submit', (event) => {
         const data = response.data;
 
         if (data.result) {
-            // tasks.insertAdjacentHTML('afterBegin', `
-            //     <li class="list-group-item" data-toggle="modal" data-target="#editModal" data-task-id="${data.result.id}">
-            //         <strong>${data.result.name}</strong>  - <small>${data.result.email}</small>
-            //         <hr class="mt-1 mb-1">
-            //         ${data.result.text}
-            //         <i class="fa fa-window-close" aria-hidden="true"></i>
-            //     </li>
-            // `);
-
             document.location = '/';
 
         } else {
@@ -44,4 +35,43 @@ form && form.addEventListener('keyup', () => {
     } else {
         button.setAttribute('disabled', 'disabled');
     }
+});
+
+const logout = document.getElementById("logout");
+
+logout && logout.addEventListener('click', (event) => {
+    event.preventDefault();
+
+    http.post('/user/logout.json').then((response) => {
+        const data = response.data;
+
+        if (data.result) {
+            document.location.reload();
+        } else {
+            alert(data.error.message);
+        }
+    })
+});
+
+
+const login = document.getElementById("login");
+
+login && login.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const data = {};
+
+    (new FormData(login)).forEach(function(value, key){
+        data[key] = value;
+    });
+
+    http.post('/user/login.json', data).then((response) => {
+        const data = response.data;
+
+        if (data.result) {
+            document.location.reload();
+        } else {
+            alert(data.error.message);
+        }
+    })
 });

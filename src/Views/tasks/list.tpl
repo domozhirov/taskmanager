@@ -1,18 +1,59 @@
 {include file="layout/header.tpl"}
 
-<div class="container" style="margin-top:30px;">
+<div class="container mt-2">
     <div class="row justify-content-md-center">
         <div class="col-sm-6">
+            <ul class="nav nav-pills mb-4">
+                <li class="nav-item dropdown ml-auto">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        {if $user}
+                            {$user->getName()}
+                        {else}
+                            Sign in
+                        {/if}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        {if $user}
+                            <a href="#"class="dropdown-item" id="logout">Logout</a>
+                        {else}
+                            <form class="px-4 py-3" id="login" style="width: 280px">
+                                <div class="form-group">
+                                    <label for="login">Login</label>
+                                    <input type="text" class="form-control" name="login" id="login" placeholder="Your login">
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="remember" id="remember">
+                                        <label class="form-check-label" for="remember">
+                                            Remember me
+                                        </label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Sign in</button>
+                            </form>
+                        {/if}
+                    </div>
+                </li>
+            </ul>
             <h1>Task manager</h1>
 
             <form id="form" action="/task/add" method="post">
-                <div class="form-group">
-                    <input id="main-input" name="name" type="text" class="form-control" placeholder="Your name" required>
-                </div>
+                {if !$user}
+                    <div class="form-group">
+                        <input id="main-input" name="name" type="text" class="form-control" placeholder="Your name" required>
+                    </div>
 
-                <div class="form-group">
-                    <input id="main-input" name="email" type="email" class="form-control" placeholder="Email" required>
-                </div>
+                    <div class="form-group">
+                        <input id="main-input" name="email" type="email" class="form-control" placeholder="Email" required>
+                    </div>
+                {else}
+                    <input name="name" type="hidden" value="{$user->getName()}">
+                    <input name="email" type="hidden" value="{$user->getEmail()}">
+                {/if}
 
                 <div class="form-group">
                     <input id="main-input" name="text" type="text" class="form-control" placeholder="Write up something" required>
