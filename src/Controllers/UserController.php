@@ -12,13 +12,14 @@ class UserController extends AbstractController
     /**
      * @param string $login
      * @param string $password
+     * @param bool $remember
      * @return array
      * @throws State
      */
-    public function loginAction(string $login, string $password)
+    public function loginAction(string $login, string $password, bool $remember = false)
     {
         try {
-            $user = User::login($login, $password);
+            $user = User::login($login, $password, $remember);
         } catch (UserException $e) {
             throw State::notFound('User not found');
         }
