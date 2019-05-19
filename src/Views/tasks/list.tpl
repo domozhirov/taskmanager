@@ -41,8 +41,11 @@
             </ul>
             <h1>Task manager</h1>
 
-            <form id="form" action="/task/add" method="post">
-                {if !$user}
+            <form id="form" action="/task/add.json" method="post">
+                {if $user && $user->getAccess() == 10}
+                    <input name="name" type="hidden" value="{$user->getName()}">
+                    <input name="email" type="hidden" value="{$user->getEmail()}">
+                {else}
                     <div class="form-group">
                         <input id="main-input" name="name" type="text" class="form-control" placeholder="Your name" required>
                     </div>
@@ -50,9 +53,6 @@
                     <div class="form-group">
                         <input id="main-input" name="email" type="email" class="form-control" placeholder="Email" required>
                     </div>
-                {else}
-                    <input name="name" type="hidden" value="{$user->getName()}">
-                    <input name="email" type="hidden" value="{$user->getEmail()}">
                 {/if}
 
                 <div class="form-group">

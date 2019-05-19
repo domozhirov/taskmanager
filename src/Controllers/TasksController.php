@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\AbstractController;
 use App\Core\State;
 use App\Models\Task;
+use App\Models\User;
 
 class TasksController extends AbstractController
 {
@@ -78,6 +79,12 @@ class TasksController extends AbstractController
      */
     public function changeStatusAction(int $id, int $status): array
     {
+        $user = $this->engine->getUser();
+
+        if (!$user && $user->getAccess() !== User::ACCESS_ADMIN) {
+            throw State::forbidden('Access Denied');
+        }
+
         if ($task = Task::getById($id)) {
             $task->setStatus($status)->update();
         } else {
@@ -97,6 +104,12 @@ class TasksController extends AbstractController
     {
         if (!$text) {
             throw State::badRequest('Param text is empty');
+        }
+
+        $user = $this->engine->getUser();
+
+        if (!$user && $user->getAccess() !== User::ACCESS_ADMIN) {
+            throw State::forbidden('Access Denied');
         }
 
         if ($task = Task::getById($id)) {
