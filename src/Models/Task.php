@@ -10,6 +10,9 @@ class Task
 
     const LIMIT = 3;
 
+    const IN_WORK = 0;
+    const COMPLETED = 1;
+
     /**
      * @var int
      */
@@ -28,7 +31,7 @@ class Task
     /**
      * @var int
      */
-    protected $completed = 0;
+    protected $status = 0;
 
     /**
      * @var string
@@ -97,19 +100,19 @@ class Task
     }
 
     /**
-     * @return int
+     * @return bool
      */
-    public function getCompleted(): int
+    public function getStatus(): bool
     {
-        return $this->completed;
+        return (bool)$this->status;
     }
 
     /**
-     * @param int $completed
+     * @param bool $status
      */
-    public function setCompleted(int $completed): void
+    public function setStatus(bool $status): void
     {
-        $this->completed = $completed;
+        $this->status = (int)$status;
     }
 
     /**
@@ -154,10 +157,9 @@ class Task
         $table = static::TABLE;
         $query = "SELECT * FROM $table";
 
-        if ($order_by) {
+        if ($order_by = static::prepareOrder($order_by)) {
             $order_by = $db->escape($order_by);
-
-            $query .= " ORDER BY $order_by";
+            $query    .=  " ORDER BY $order_by";
         }
 
         return Db::getInstance()->fetchAll("$query LIMIT $start, $limit");
@@ -166,9 +168,10 @@ class Task
     public function add()
     {
         $data = [
-            'name'  => $this->getName(),
-            'email' => $this->getEmail(),
-            'text'  => $this->getText(),
+            'name'    => $this->getName(),
+            'email'   => $this->getEmail(),
+            'text'    => $this->getText(),
+            'created' => date("Y-m-d H:i:s"),
         ];
 
         $this->id = Db::getInstance()->insert(static::TABLE, $data);
@@ -192,11 +195,49 @@ class Task
     public function toArray(): array
     {
         return [
-            'id'        => $this->getId(),
-            'name'      => $this->getName(),
-            'email'     => $this->getEmail(),
-            'completed' => $this->getCompleted(),
-            'text'      => $this->getText(),
+            'id'     => $this->getId(),
+            'name'   => $this->getName(),
+            'email'  => $this->getEmail(),
+            'status' => $this->getStatus(),
+            'text'   => $this->getText(),
         ];
+    }
+
+    /**
+     * @param string $sort_by
+     * @return string
+     */
+    protected static function prepareOrder(string $sort_by): string
+    {
+        $order         = [];
+        $system_fields = ["name", "email", "status"];
+
+        if ($sort_by && !is_array($sort_by)) {
+            foreach (explode(",", $sort_by) as $sort_item) {
+                $list = explode(" ", trim($sort_item), 2);
+
+                if (count($list) == 2) {
+                    list($sort_field, $sort_asc) = $list;
+
+                    if (isset($system_fields[$sort_field]) || is_integer($sort_field)) { // integer is for sorting by folder_id
+                        $sort_field = "$sort_field";
+                    }
+
+                    $order[$sort_field] = $sort_asc == "asc" ? 'ASC' : 'DESC';
+                } else {
+                    $order['created'] = 'DESC';
+                }
+            }
+        } else {
+            $order['created'] = 'DESC';
+        }
+
+        return implode(', ', array_map(
+            function ($k, $v) {
+                return "$k $v";
+            },
+            array_keys($order),
+            array_values($order)
+        ));
     }
 }

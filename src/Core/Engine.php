@@ -190,7 +190,8 @@ class Engine
     public function getActionInfo(string $class, string $method): array
     {
         try {
-            $me = new \ReflectionMethod($this->getControllerClass($class), $method . $this->controllers[$class]['postfix']);
+            $me = new \ReflectionMethod($this->getControllerClass($class),
+                $method . $this->controllers[$class]['postfix']);
         } catch (\Exception $e) {
             throw new State("Controller method not found", 404, $e);
         }
@@ -254,7 +255,7 @@ class Engine
             throw new State("Some arguments mismatch required parameter '$name'", 404);
         }
 
-        return call_user_func_array([$controller, $method .'Action'], $args);
+        return call_user_func_array([$controller, $method . 'Action'], $args);
     }
 
     /**

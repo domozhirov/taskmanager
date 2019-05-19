@@ -201,7 +201,7 @@ class Request
     /**
      * @return AbstractController
      */
-    public function getActor(): AbstractController
+    public function getActor(): ?AbstractController
     {
         return $this->actor;
     }

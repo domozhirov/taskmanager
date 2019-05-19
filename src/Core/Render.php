@@ -16,16 +16,30 @@ class Render
         $render->setCacheDir(APP_DIR . '/var/smarty/cache');
         $render->setCompileDir(APP_DIR . '/var/smarty/template_c');
 
-        $controller = $request->getController();
-        $action     = $request->getAction();
+        $controller = strtolower($request->getController());
+        $action     = strtolower($request->getAction());
+        $error      = $request->getError();
+        $tpls       = [];
 
-        $request->setStatus(200);
+        if ($error) {
+            switch ($code = $error->getCode()) {
+                case '404':
+                case '500':
+                case '503':
+                    $tpls[] = "error/$code.tpl";
+                    break;
 
-        $tpls = [
-            strtolower($controller) . '/' . strtolower($action) . '.tpl',
-            strtolower($controller) . '/default.tpl',
-            'default.tpl',
-        ];
+                default:
+                    $tpls[] = "error/default.tpl";
+            }
+        } else {
+            $request->setStatus(200);
+
+            $tpls = [
+                "$controller/$action.tpl",
+                "$controller/default.tpl",
+            ];
+        }
 
         foreach ($tpls as $tpl) {
             if ($render->templateExists($tpl)) {

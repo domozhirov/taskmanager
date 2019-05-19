@@ -2,9 +2,14 @@
 
 $config = require_once dirname(__DIR__) . '/bootstrap.php';
 $engine = new App\Core\Engine($config);
+$request = new App\Core\Request;
 
 try {
-    $engine->dispatch(new App\Core\Request);
+    $engine->dispatch($request);
+} catch (Exception $e) {
+    $engine->display($request, $e);
 } catch (Throwable $e) {
-    die('Fatal Error');
+    $error = new App\Core\State('Fatal Error');
+
+    $engine->display($request, $error);
 }

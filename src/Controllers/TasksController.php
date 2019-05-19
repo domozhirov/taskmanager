@@ -12,10 +12,11 @@ class TasksController extends AbstractController
 
     /**
      * @param int $p
+     * @param string $sort_by
      * @return array
      * @throws State
      */
-    public function listAction(int $p = 0): array
+    public function listAction(int $p = 0, string $sort_by = ''): array
     {
         $total = Task::getTotal();
 
@@ -23,7 +24,7 @@ class TasksController extends AbstractController
             throw State::badRequest('Page parameter requires a positive number');
         }
 
-        $tasks = $total ? Task::getAll($p * Task::LIMIT, Task::LIMIT, "id DESC, completed DESC") : [];
+        $tasks = $total ? Task::getAll($p * Task::LIMIT, Task::LIMIT, $sort_by) : [];
 
         if ($p && $total && !$tasks) {
             throw State::notFound('Not Found');

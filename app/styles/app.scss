@@ -1,3 +1,7 @@
 @import '~normalize.css/normalize.css';
 @import '~bootstrap/dist/css/bootstrap.min.css';
 @import '~@fortawesome/fontawesome-free/scss/fontawesome';
+
+html, body {
+    height: 100%;
+}
