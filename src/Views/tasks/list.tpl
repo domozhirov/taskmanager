@@ -2,7 +2,7 @@
 
 <div class="container mt-2">
     <div class="row justify-content-md-center">
-        <div class="col-sm-6">
+        <div class="col-sm-12 col-md-6">
             <ul class="nav nav-pills mb-4">
                 <li class="nav-item dropdown ml-auto">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">

@@ -2,11 +2,12 @@
 .dp
 node_modules
 vendor
+dayside
 
 # local env files
 .env.local
 .env.*.local
-config.php
+./config.php
 
 # Log files
 npm-debug.log*

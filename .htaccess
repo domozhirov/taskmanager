@@ -1,0 +1,12 @@
+DirectoryIndex index.php
+RewriteEngine On
+
+RewriteRule ^/?$ public/ [L]
+
+RewriteRule ^assets(/|$) /public%{REQUEST_URI} [L,NC,R=301,NE]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)$ public/?path=$1 [L,QSA]
+
+RewriteRule ^assets/(.*) /public/assets/$1 [L,QSA]
