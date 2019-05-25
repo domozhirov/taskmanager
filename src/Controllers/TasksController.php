@@ -81,7 +81,7 @@ class TasksController extends AbstractController
     {
         $user = $this->engine->getUser();
 
-        if (!$user && $user->getAccess() !== User::ACCESS_ADMIN) {
+        if (!$user || $user->getAccess() !== User::ACCESS_ADMIN) {
             throw State::forbidden('Access Denied');
         }
 
@@ -108,7 +108,7 @@ class TasksController extends AbstractController
 
         $user = $this->engine->getUser();
 
-        if (!$user && $user->getAccess() !== User::ACCESS_ADMIN) {
+        if (!$user || $user->getAccess() !== User::ACCESS_ADMIN) {
             throw State::forbidden('Access Denied');
         }
 
